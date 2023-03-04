@@ -11,27 +11,13 @@ const prompt = 'generate 3 ideas for a YouTube video';
 // Make the API call
 
 const App = () => {
-	// React.useEffect(() => {
-	// 	generateIdeas();
-	// }, []);
 	const [ideas, setIdeas] = React.useState([]);
 	const [isActivated, setIsActivated] = React.useState(false);
 	const [promptData, setPromptData] = React.useState('');
 	const [linear, setLinear] = React.useState(false);
-	const options = {
-		method: 'POST',
-		headers: {
-			accept: 'application/json',
-			'content-type': 'application/json',
-			authorization:
-				'Bearer eyJtaXJvLm9yaWdpbiI6ImV1MDEifQ_P49rjoPPIDRzD4edjuDzrDTaGOs',
-		},
-		body: JSON.stringify({
-			data: { content: ideas, shape: 'square' },
-			position: { x: 100, y: 100 },
-		}),
-	};
+
 	function addStickyNote() {
+		setIsActivated(false);
 		ideas.forEach((idea) => {
 			fetch('https://api.miro.com/v2/boards/uXjVPv6nqgY%3D/sticky_notes', {
 				method: 'POST',
@@ -76,7 +62,8 @@ const App = () => {
 				setLinear(false);
 			})
 			.catch((error) => {
-				setIdeas(error);
+				console.log(error.message);
+				setIdeas(error.message);
 			});
 	}
 
@@ -94,25 +81,31 @@ const App = () => {
 					<Box mb={5} textAlign='center' fontSize={30}>
 						Web Tool to add Computer-generated ideas to Miro Boards{' '}
 					</Box>
-					<TextField
-						onChange={(e) => {
-							setPromptData(e.target.value);
-						}}
-						multiline
-						minRows={4}
-						fullWidth
-					/>
+					{linear ? (
+						<LinearProgress />
+					) : (
+						<TextField
+							onChange={(e) => {
+								setPromptData(e.target.value);
+							}}
+							multiline
+							minRows={4}
+							fullWidth
+						/>
+					)}
 				</Box>
 				<Box mt={10} display='flex' gap={6} justifyContent='center'>
-					<Button variant='contained' onClick={addStickyNote}>
-						click me to add sticky notes
+					<Button disabled={linear} variant='contained' onClick={addStickyNote}>
+						click to add sticky notes to miro board
 					</Button>
 					<Button variant='contained' onClick={generateIdeas}>
-						click me to generate ideas
+						click to generate ideas
 					</Button>
 				</Box>
-				<Box mt={5}>
-					{isActivated ? 'your ideas have been generated' : <LinearProgress />}
+				<Box mt={5} fontSize={30} textAlign='center'>
+					{isActivated
+						? 'your ideas have been generated, click to add to miro board'
+						: ''}
 				</Box>
 			</Container>
 		</Box>
