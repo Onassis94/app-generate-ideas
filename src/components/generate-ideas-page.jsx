@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import { LinearProgress, TextField } from '@mui/material';
 import { Container, Box } from '@mui/system';
 import { useRecoilValue } from 'recoil';
-import { authState, boardIdState } from '../state/state';
+import { authState, boardIdState, gptAuth } from '../state/state';
 
 const GenerateIdeaPage = () => {
 	const [ideas, setIdeas] = React.useState([]);
@@ -13,12 +13,14 @@ const GenerateIdeaPage = () => {
 	const [promptData, setPromptData] = React.useState('');
 	const [linear, setLinear] = React.useState(false);
 	const auth = useRecoilValue(authState);
+	const aiAuth = useRecoilValue(gptAuth);
 	const boardId = useRecoilValue(boardIdState);
 	const [error, setError] = React.useState(false);
 
 	const addStickyNote = () => {
 		setIsActivated(false);
-		ideas.forEach((idea) => {
+		ideas.forEach((idea, index) => {
+			const position = { x: (index + 3) * 180, y: 150 };
 			fetch(`https://api.miro.com/v2/boards/${boardId}/sticky_notes`, {
 				method: 'POST',
 				headers: {
@@ -28,7 +30,7 @@ const GenerateIdeaPage = () => {
 				},
 				body: JSON.stringify({
 					data: { content: idea, shape: 'square' },
-					position: { x: 100, y: 100 },
+					position: position,
 				}),
 			})
 				.then((response) => response.json())
@@ -44,6 +46,7 @@ const GenerateIdeaPage = () => {
 	};
 	const generateIdeas = () => {
 		setLinear(true);
+		setIsIdeasAdded(false);
 		axios
 			.post(
 				'https://api.openai.com/v1/engines/text-davinci-002/completions',
@@ -55,20 +58,17 @@ const GenerateIdeaPage = () => {
 				{
 					headers: {
 						'Content-Type': 'application/json',
-						Authorization: `Bearer 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`,
+						Authorization: `${aiAuth}`,
 					},
 				}
 			)
 			.then((response) => {
 				const data = checkNewLine(response.data.choices[0].text);
-				console.log(data);
-
 				setIdeas(data);
 				setIsActivated(true);
 				setLinear(false);
 			})
 			.catch((error) => {
-				console.log(error.message);
 				setIdeas(error.message);
 			});
 	};
@@ -80,7 +80,7 @@ const GenerateIdeaPage = () => {
 		return newLine;
 	};
 
-	if (error) return <div>Something went wrong</div>;
+	if (error) return <div>Something went wrong, try again</div>;
 
 	return (
 		<Box>
@@ -127,7 +127,7 @@ const GenerateIdeaPage = () => {
 						click to add sticky notes to miro board
 					</Button>
 					<Box mt={5} fontSize={30} textAlign='center'>
-						{isIdeasAdded
+						{isIdeasAdded & !linear
 							? 'Nice, Your ideas have been added to your miro board. You can now close this tab'
 							: ''}
 					</Box>

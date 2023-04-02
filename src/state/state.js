@@ -1,11 +1,16 @@
 import { atom } from 'recoil';
 
 export const authState = atom({
-	key: 'textState', // unique ID (with respect to other atoms/selectors)
-	default: '', // default value (aka initial value)
+	key: 'authState',
+	default: '',
 });
 
 export const boardIdState = atom({
 	key: 'boardIdState',
+	default: '',
+});
+
+export const gptAuth = atom({
+	key: 'gptAuthState',
 	default: '',
 });

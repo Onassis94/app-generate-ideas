@@ -16,7 +16,10 @@ const NavBar = () => {
 				<Link to='/idea-generation-tool'>Idea Generation Tool</Link>
 			</span>
 			<span>
-				<Link to='/todo'>How To Use</Link>
+				<Link to='/how-to-use'>How To Use</Link>
+			</span>
+			<span>
+				<Link to='/gpt-auth'>AI API</Link>
 			</span>
 		</Box>
 	);

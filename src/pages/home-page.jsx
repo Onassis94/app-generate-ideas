@@ -6,7 +6,6 @@ import { useRecoilState } from 'recoil';
 import { authState } from '../state/state';
 import DisplayBoards from '../components/display-boards';
 
-const important = 'eyJtaXJvLm9yaWdpbiI6ImV1MDEifQ_P49rjoPPIDRzD4edjuDzrDTaGOs';
 const HomePage = () => {
 	const [boards, setBoards] = React.useState();
 	const [auth, setAuth] = useRecoilState(authState);
@@ -22,11 +21,9 @@ const HomePage = () => {
 		fetch('https://api.miro.com/v2/boards?sort=default', options)
 			.then((response) => response.json())
 			.then((response) => {
-				console.log(response);
 				setBoards(response);
 			})
 			.catch((err) => {
-				console.log(err);
 				setError(true);
 			});
 	};

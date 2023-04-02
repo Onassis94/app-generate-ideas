@@ -6,6 +6,8 @@ import GenerateIdeasPage from './pages/generate-idea-page';
 import Navbar from './pages/navbar';
 import HomePage from './pages/home-page';
 import { Box } from '@mui/system';
+import HowToUsePage from './pages/how-to-use-page';
+import GptPage from './pages/gpt-page';
 
 const App = () => {
 	return (
@@ -23,6 +25,8 @@ const App = () => {
 							path='idea-generation-tool'
 							element={<GenerateIdeasPage />}
 						/>
+						<Route path='how-to-use' element={<HowToUsePage />} />
+						<Route path='gpt-auth' element={<GptPage />} />
 					</Routes>
 				</BrowserRouter>
 			</RecoilRoot>
